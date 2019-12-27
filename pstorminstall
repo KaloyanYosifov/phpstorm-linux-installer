@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+
+function echo_instruction() {
+    echo "-----------------------------------------------"
+    echo $1
+    echo "-----------------------------------------------"
+}
+
+function install_phpstorm() {
+    if [ -z $1 ]; then
+        echo "Please pass Phpstorm folder name"
+        exit 1
+    fi
+
+    which phpstorm > /dev/null 2>&1
+
+    if [ $? -eq 0 ]; then
+        PHPSTORM_EXEC_PATH="$(which phpstorm)"
+
+        # delete old phpstorm
+        echo_instruction "Deleting old phpstorm exec"
+        sudo rm $PHPSTORM_EXEC_PATH
+    else
+        PHPSTORM_EXEC_PATH="/usr/local/bin/phpstorm"
+    fi
+
+    FULL_PHPSTORM_BIN_PATH="$HOME/$1/bin"
+
+    # replace local executable phpstorm path and add it to 
+    sudo sed "s/PHP_STORM_ENV_PATH/$FULL_PHPSTORM_BIN_PATH/g" ./phpstorm-executable > $PHPSTORM_EXEC_PATH
+    sudo chmod +x $FULL_PHPSTORM_BIN_PATH
+}
+
+if [ -z $1 ]; then
+    echo "Please pass the version of PHPStorm like (2019.3.1)"
+    exit 1
+fi
+
+PHPSTORM_FOLDER_NAME=PhpStorm
+FULL_PHP_STORM_PATH="$HOME/$PHPSTORM_FOLDER_NAME"
+TEMP_PHPSTORM_INSTALLER_FOLDER="/tmp/PhpStorm-Installer"
+PHPSTORM_VERSION_NAME="PhpStorm-$1"
+
+if ! [ -d $TEMP_PHPSTORM_INSTALLER_FOLDER ]; then
+    echo_instruction "Creating Downloads folder"
+    mkdir -p $TEMP_PHPSTORM_INSTALLER_FOLDER
+else 
+    # Delete the directory and create it
+    # so we have a fresh folder structure in it
+    rm -rf $TEMP_PHPSTORM_INSTALLER_FOLDER
+    mkdir -p $TEMP_PHPSTORM_INSTALLER_FOLDER
+fi
+
+if [ -d $FULL_PHP_STORM_PATH ]; then
+    echo_instruction "Deleting current PHPStorm version (5 seconds left before uninstall)"
+    sleep 5
+    rm -rf $FULL_PHP_STORM_PATH
+fi
+
+# Check if we have wget
+which wget > /dev/null 2>&1
+
+if [ $? -ne 0 ]; then
+    echo "Please intall wget"
+    exit 1
+fi
+
+cd $TEMP_PHPSTORM_INSTALLER_FOLDER
+
+echo_instruction "Downloading PhpStorm"
+wget https://download.jetbrains.com/webide/$PHPSTORM_VERSION_NAME.tar.gz
+
+if [ $? -ne 0 ]; then
+    echo "Something went wrong when downloading PhpStorm"
+fi
+
+# Extract tar
+echo_instruction "Extracting Tar"
+tar -v -xzf $PHPSTORM_VERSION_NAME.tar.gz
+
+rm $PHPSTORM_VERSION_NAME.tar.gz
+
+echo_instruction "Installing PhpStorm"
+
+mv * $PHPSTORM_FOLDER_NAME
+mv $PHPSTORM_FOLDER_NAME $HOME
+
+install_phpstorm $PHPSTORM_FOLDER_NAME
+
+cd $HOME
+
+echo_instruction "Removing installer folder"
+rm -rf $TEMP_PHPSTORM_INSTALLER_FOLDER

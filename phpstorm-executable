@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+DIR=$(pwd)
+
+if ! [ -z $1 ] && ! [[ $1 == "." ]]; then
+   if ! [[ $1 =~ ^\/.* ]]; then
+    DIR="$DIR/$1"
+   else
+    DIR=$1
+   fi
+fi
+
+PHPSTORM_DIR="PHP_STORM_ENV_PATH"
+cd $PHPSTORM_DIR
+./phpstorm.sh $DIR &>/dev/null &
