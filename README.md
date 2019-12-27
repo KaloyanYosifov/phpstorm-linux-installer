@@ -7,6 +7,10 @@
 
 ***You can use it by cloning the repository, going to the folder and running*** `./pstorminstall 2019.3.1 $HOME` ***This will install PhpStorm in your home directory***
 
+- Am i limited to version 2019.3.1?
+
+***No you are not. You can set the version of PHPStorm you require by replacing `2019.3.1` when executing the command to whatever version you want.***
+
 ### How to install
 
 Open your terminal and run:
