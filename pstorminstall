@@ -19,7 +19,7 @@ function install_phpstorm() {
 
         # delete old phpstorm
         echo_instruction "Deleting old phpstorm exec"
-        sudo rm $PHPSTORM_EXEC_PATH
+        rm $PHPSTORM_EXEC_PATH
     else
         PHPSTORM_EXEC_PATH="/usr/local/bin/phpstorm"
     fi
@@ -27,8 +27,8 @@ function install_phpstorm() {
     FULL_PHPSTORM_BIN_PATH="$PHPSTORM_INSTALLATION_DIR/$1/bin"
 
     # replace local executable phpstorm path and add it to 
-    sudo sed "s/PHP_STORM_ENV_PATH/$FULL_PHPSTORM_BIN_PATH/g" ./phpstorm-executable > $PHPSTORM_EXEC_PATH
-    sudo chmod +x $FULL_PHPSTORM_BIN_PATH
+    sed "s~PHP_STORM_ENV_PATH~$FULL_PHPSTORM_BIN_PATH~g" $PHPSTORM_EXECUTABLE_FILE > $PHPSTORM_EXEC_PATH
+    chmod +x $PHPSTORM_EXEC_PATH
 }
 
 if [ -z $1 ]; then
@@ -41,6 +41,7 @@ if [ -z $2 ]; then
     exit 1
 fi
 
+PHPSTORM_EXECUTABLE_FILE="$(pwd)/phpstorm-executable"
 PHPSTORM_INSTALLATION_DIR=$2
 PHPSTORM_FOLDER_NAME=PhpStorm
 FULL_PHP_STORM_PATH="$PHPSTORM_INSTALLATION_DIR/$PHPSTORM_FOLDER_NAME"
