@@ -24,7 +24,7 @@ function install_phpstorm() {
         PHPSTORM_EXEC_PATH="/usr/local/bin/phpstorm"
     fi
 
-    FULL_PHPSTORM_BIN_PATH="$HOME/$1/bin"
+    FULL_PHPSTORM_BIN_PATH="$PHPSTORM_INSTALLATION_DIR/$1/bin"
 
     # replace local executable phpstorm path and add it to 
     sudo sed "s/PHP_STORM_ENV_PATH/$FULL_PHPSTORM_BIN_PATH/g" ./phpstorm-executable > $PHPSTORM_EXEC_PATH
@@ -32,17 +32,23 @@ function install_phpstorm() {
 }
 
 if [ -z $1 ]; then
-    echo "Please pass the version of PHPStorm like (2019.3.1)"
+    echo "Please pass the version of PHPStorm like (2019.3.1) and pass directory to install phpstorm in as a second parameter"
     exit 1
 fi
 
+if [ -z $2 ]; then
+    echo "Please pass directory to install phpstorm in as a second parameter"
+    exit 1
+fi
+
+PHPSTORM_INSTALLATION_DIR=$2
 PHPSTORM_FOLDER_NAME=PhpStorm
-FULL_PHP_STORM_PATH="$HOME/$PHPSTORM_FOLDER_NAME"
+FULL_PHP_STORM_PATH="$PHPSTORM_INSTALLATION_DIR/$PHPSTORM_FOLDER_NAME"
 TEMP_PHPSTORM_INSTALLER_FOLDER="/tmp/PhpStorm-Installer"
 PHPSTORM_VERSION_NAME="PhpStorm-$1"
 
 if ! [ -d $TEMP_PHPSTORM_INSTALLER_FOLDER ]; then
-    echo_instruction "Creating Downloads folder"
+    echo_instruction "Creating Temporary folder"
     mkdir -p $TEMP_PHPSTORM_INSTALLER_FOLDER
 else 
     # Delete the directory and create it
@@ -83,11 +89,9 @@ rm $PHPSTORM_VERSION_NAME.tar.gz
 echo_instruction "Installing PhpStorm"
 
 mv * $PHPSTORM_FOLDER_NAME
-mv $PHPSTORM_FOLDER_NAME $HOME
+mv $PHPSTORM_FOLDER_NAME $PHPSTORM_INSTALLATION_DIR
 
 install_phpstorm $PHPSTORM_FOLDER_NAME
-
-cd $HOME
 
 echo_instruction "Removing installer folder"
 rm -rf $TEMP_PHPSTORM_INSTALLER_FOLDER
